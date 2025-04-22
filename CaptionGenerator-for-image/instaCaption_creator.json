@@ -1,0 +1,336 @@
+{
+  "name": "instaCaption creator",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v18.0/{instagram_user_id}/media",
+        "authentication": "genericCredentialType",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6d20575d-7d4f-4473-be56-1da6547a4eee",
+      "name": "Upload to Instagram"
+    },
+    {
+      "parameters": {
+        "formTitle": "Instagram Image Upload Form",
+        "formDescription": "Upload an image and caption to check if it's ready for Instagram.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Image Upload",
+              "fieldType": "file",
+              "requiredField": true
+            }
+          ]
+        },
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -1740,
+        740
+      ],
+      "id": "c935db0f-e4b5-492b-80f6-edac694f35e8",
+      "name": "Upload Form - Insta Hook Check",
+      "webhookId": "071e0c75-3829-4ceb-aca0-69afbac57e06"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "text": "create an attractive caption for uploading this image on instagram. with tags",
+        "inputType": "base64",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -1080,
+        760
+      ],
+      "id": "6a6783dc-5516-46a9-991f-8986acaf28db",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "TgXYgGoeaqYWZPES",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7373b4bc-4f0b-42a0-9107-a777c7acef0b",
+              "leftValue": "={{ $json.content }}",
+              "rightValue": "hook",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -900,
+        740
+      ],
+      "id": "40c230d9-e1f9-4c27-a439-4f30735c9726",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://developers.facebook.com/docs/graph-api",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -240,
+        720
+      ],
+      "id": "6720998b-3547-44fc-afbf-b89592058a24",
+      "name": "Upload to Instagram1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "KCSqwxpc0PjCAz79",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tinify.com/shrink",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "Image_Upload",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1480,
+        740
+      ],
+      "id": "602f35b9-31b9-47fe-bbc0-11cf225a54d0",
+      "name": "Send to Compress",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "TbfjifGMnJNYBY81",
+          "name": "Header Auth account 2"
+        },
+        "httpBasicAuth": {
+          "id": "QhneSDDMIcG2ypfw",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.output.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1300,
+        740
+      ],
+      "id": "66794615-462a-4f77-88bb-c8a88eb5ae5b",
+      "name": "Received Compressed",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "QhneSDDMIcG2ypfw",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Received Compressed').item.json.output.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -440,
+        720
+      ],
+      "id": "1f1b99ce-2612-4eb3-9306-d57eb8c176d3",
+      "name": "Received Compressed1",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "QhneSDDMIcG2ypfw",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "55927c1a-44e1-4d1d-a91e-e9035a0046c7",
+              "name": "output.url",
+              "value": "={{ $('Received Compressed').item.json.output.url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -660,
+        720
+      ],
+      "id": "47090d59-1487-4898-80c6-cdb942d7789b",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Upload Form - Insta Hook Check": {
+      "main": [
+        [
+          {
+            "node": "Send to Compress",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send to Compress": {
+      "main": [
+        [
+          {
+            "node": "Received Compressed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Received Compressed": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Received Compressed1": {
+      "main": [
+        [
+          {
+            "node": "Upload to Instagram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Received Compressed1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ab64a656-be53-474f-9eb9-2d9be7189429",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "450655d3fbf0d5e4b498110e2b0d2dd781d962b5f77663c986a3e76cf9266e86"
+  },
+  "id": "gUJa3yzHXVPhZXKg",
+  "tags": []
+}
