@@ -1,0 +1,202 @@
+{
+  "name": "telegram-based Mental Health Chatbot",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -60,
+        -20
+      ],
+      "id": "bcbc023e-58a1-4ce4-b9d0-3adb19572bad",
+      "name": "Telegram Trigger",
+      "webhookId": "1fd57afa-97a8-471a-a4a2-9cf22e71cefd",
+      "credentials": {
+        "telegramApi": {
+          "id": "pRfHt3Zyyx9YLjZg",
+          "name": "mentalSupporter"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "68b105ef-c820-4d96-9b2b-f9995bdf44df",
+              "name": "chat id",
+              "value": "={{ $json.message.chat.id }}",
+              "type": "number"
+            },
+            {
+              "id": "747c3b58-45b5-4625-b43b-5389f71b0f21",
+              "name": "user message",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        -20
+      ],
+      "id": "7e223bf3-ef7e-4b86-acfb-d61d502c3438",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.message_id }}"
+      },
+      "id": "c68d97fa-2337-4539-840e-ec6fc75cbc0f",
+      "name": "Simple Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "position": [
+        520,
+        200
+      ],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "88b8daa0-a93c-48c8-ad7f-5633727ef9a2",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        360,
+        200
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "TgXYgGoeaqYWZPES",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You're a kind mental health assistant. A user said: '{{ $json[\"user message\"] }}'\nDo following things\n1. Respond with empathy.\n2. Classify their emotion: [happy, sad, anxious, angry, crisis]\n3. If it's a crisis, gently recommend talking to a mental health professional.\n\n",
+        "options": {}
+      },
+      "id": "4e137c97-f234-4367-b134-7631ed78899f",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        400,
+        -20
+      ],
+      "typeVersion": 1.8
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Edit Fields').item.json['chat id'] }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        880,
+        -40
+      ],
+      "id": "fd5b0486-fbdb-4904-adf5-f451e81b5c95",
+      "name": "Telegram",
+      "webhookId": "9dc03d90-5b73-409f-a049-9133670caf48",
+      "credentials": {
+        "telegramApi": {
+          "id": "pRfHt3Zyyx9YLjZg",
+          "name": "mentalSupporter"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6d881185-fcf1-427b-8a7b-2f51e48db9fd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "450655d3fbf0d5e4b498110e2b0d2dd781d962b5f77663c986a3e76cf9266e86"
+  },
+  "id": "xZqObWNyKTs7x8Dw",
+  "tags": []
+}
