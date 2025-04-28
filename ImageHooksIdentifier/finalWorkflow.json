@@ -1,0 +1,350 @@
+{
+  "name": "newfetchinfworkflwp",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "app6LYn5SLnshv85m",
+          "mode": "list",
+          "cachedResultName": "testin base",
+          "cachedResultUrl": "https://airtable.com/app6LYn5SLnshv85m"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblgGShMOp4xwI9Kv",
+          "mode": "list",
+          "cachedResultName": "n8n-sheet",
+          "cachedResultUrl": "https://airtable.com/app6LYn5SLnshv85m/tblgGShMOp4xwI9Kv"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Image Name": "={{ $json['Image Name'] }}",
+            "Emotional Triggers": "={{ $json['Emotional Triggers'] }}",
+            "Colors": "={{ $json.Colors }}",
+            "Facial Expression": "={{ $json['Facial Expressions'] }}",
+            "Text or Symbols": "={{ $json['Text or Symbols'] }}",
+            "Composition Techniques": "={{ $json['Composition Techniques'] }}",
+            "Trends/Styles": "={{ $json['Trends/Style'] }}",
+            "Imrovements": "={{ $json['Suggestions for Improvement'] }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "Image Name",
+              "displayName": "Image Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Emotional Triggers",
+              "displayName": "Emotional Triggers",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Colors",
+              "displayName": "Colors",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Facial Expression",
+              "displayName": "Facial Expression",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Text or Symbols",
+              "displayName": "Text or Symbols",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Composition Techniques",
+              "displayName": "Composition Techniques",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Trends/Styles",
+              "displayName": "Trends/Styles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Imrovements",
+              "displayName": "Imrovements",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "time",
+              "displayName": "time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1060,
+        220
+      ],
+      "id": "62afb452-6dfb-4466-ae94-5cb57dee9ed5",
+      "name": "Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "ny5JiVQBhAniDCEo",
+          "name": "newA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "id": "00038c86-4733-4ce2-9f69-5ab045276c8e",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1060,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "image-analysis-upload",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "05cf5716-566c-4aad-bc74-000da36543ad",
+      "name": "Webhook1",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        360
+      ],
+      "webhookId": "7e84b020-173c-490e-b25e-dcdcff9ef0a3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tinify.com/shrink",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "file",
+        "options": {}
+      },
+      "id": "78c75aff-42c2-441d-a837-27748b1224ce",
+      "name": "Send to Compress1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        180,
+        360
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "QhneSDDMIcG2ypfw",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.output.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "options": {
+          "response": {}
+        }
+      },
+      "id": "b50b3347-b7ca-4b09-bd07-c6ba22eb6d73",
+      "name": "Received Compressed1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        380,
+        360
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "QhneSDDMIcG2ypfw",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": "gpt-4o-mini",
+        "text": "=I will upload an image.\nPlease analyze it and provide your findings as **pure JSON output only**.\n\nHere is the JSON format I want:\n{\n  \"Image Name\": \"{{ $json.output.url }}\",\n  \"Emotional Triggers\": \"....\",\n  \"Colors\": \"....\",\n  \"Facial Expressions\": \"....\",\n  \"Text or Symbols\": \"....\",\n  \"Composition Techniques\": \"....\",\n  \"Trends/Style\": \"....\",\n  \"Suggestions for Improvement\": \"....\"\n}\nPlease do NOT write any explanation or extra text — only give me pure JSON output inside code block ```json ... ``` format.",
+        "inputType": "base64",
+        "options": {}
+      },
+      "id": "e0b1eeb0-c072-4f3a-8b6d-055ca9465cfd",
+      "name": "OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        580,
+        360
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "TgXYgGoeaqYWZPES",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const content =$input.first().json.content;\n\nconst cleaned = content\n  .replace(/```json\\s*/, '')\n  .replace(/```/, '')\n  .trim();\n\nconst parsed = JSON.parse(cleaned);\n\nreturn [parsed];"
+      },
+      "id": "5a5494bb-82c2-4255-b13d-88bf5da24b50",
+      "name": "Code1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        780,
+        360
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Send to Compress1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send to Compress1": {
+      "main": [
+        [
+          {
+            "node": "Received Compressed1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Received Compressed1": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b3e98c3f-24cd-41db-952d-9acbe25c3498",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "450655d3fbf0d5e4b498110e2b0d2dd781d962b5f77663c986a3e76cf9266e86"
+  },
+  "id": "ENUmLYWrrSewB1D6",
+  "tags": []
+}
